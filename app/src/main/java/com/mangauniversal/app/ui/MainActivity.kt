@@ -87,7 +87,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFF0E0E0E)
                 ) {
-                    MangaUniversalApp()
+                    BackgroundWrapper {
+                        MangaUniversalApp()
+                    }
                 }
             }
         }
@@ -119,7 +121,6 @@ fun MangaUniversalApp() {
     var showPermissionDialog by remember { mutableStateOf(false) }
     var pendingPathAfterPermission by remember { mutableStateOf<String?>(null) }
 
-    // Ajustes visuales (Brillo y Filtro Azul)
     val prefs = remember { ThemePreferences(context) }
     var appSettings by remember { mutableStateOf(AppSettings()) }
     
@@ -127,7 +128,6 @@ fun MangaUniversalApp() {
         appSettings = prefs.load()
     }
     
-    // Recargar ajustes cada vez que volvemos al Home (para aplicar cambios del SettingsScreen)
     LaunchedEffect(currentScreen) {
         if (currentScreen is Screen.Home) {
             appSettings = prefs.load()
@@ -172,7 +172,6 @@ fun MangaUniversalApp() {
         )
     }
 
-    // ENVOLVEMOS TODA LA APP CON EL FILTRO DE BRILLO Y LUZ AZUL
     Box(modifier = Modifier.fillMaxSize()) {
         when (val screen = currentScreen) {
             is Screen.Home -> MainTabsScreen(
@@ -312,7 +311,6 @@ fun MangaUniversalApp() {
             )
         }
         
-        // CAPA DE BRILLO
         if (appSettings.brightness < 1f && currentScreen !is Screen.Reader) {
             Box(
                 modifier = Modifier
@@ -321,7 +319,6 @@ fun MangaUniversalApp() {
             )
         }
         
-        // CAPA DE FILTRO LUZ AZUL
         if (appSettings.blueLightFilter > 0f && currentScreen !is Screen.Reader) {
             Box(
                 modifier = Modifier
@@ -331,7 +328,6 @@ fun MangaUniversalApp() {
         }
     }
 }
-
 @Composable
 fun PermissionDialog(
     onOpenSettings: () -> Unit,
@@ -428,7 +424,7 @@ fun MainTabsScreen(
     onOpenComicFromTab: (Comic) -> Unit,
     onOpenBookmark: (Comic, Int) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFF0E0E0E))) {
+    Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
             currentTab = currentTab,
             onTabChange = onTabChange,
@@ -527,7 +523,7 @@ private fun RowScope.TabItem(label: String, selected: Boolean, onClick: () -> Un
         Text(
             text = label,
             color = if (selected) Color.White else Color.White.copy(alpha = 0.6f),
-                        fontSize = 14.sp,
+            fontSize = 14.sp,
             fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
         )
         if (selected) {
